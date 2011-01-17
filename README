@@ -1,0 +1,23 @@
+This is a 6DoF inertial navigation example for Android devices.
+
+In this example the device itself works like a camera which is initially directed to an imaginary cube located 5 meters away. Therefore, as you move the device you will start seeing the different faces of the cube.
+
+It has 3 modes:
+3DoF Accelerometer+Compas : This mode is a 3DoF mode. It only computes the orientation based on accelerometer and compass output (actually it uses a built-in function). The position of the cube in the device's body frame of reference of is assumed to be constant. In other words, the device is allowed to move on a sphere where the cube is located on the center.
+
+3DoF Gyroscope : This is also a 3DoF mode. However, in this mode the attitude is computed using only the gyroscope outputs. (The initial orientation is taken from the first mode). In this mode, you will definitely observe the superiority of gyroscope based orientation to the the accelerometer based one.
+
+6DoF: This is a pure 6DoF inertial navigation mode. In the previous 3DoF modes, the displacement of the device has no effect on the rendered cube image. However, in this mode, as you move the device, you will (hopefully) see a shift in  the cube image in a proportional manner. (i.e. If you want to see the cube closer, move the device on its z-direction toward the camera. As you move, the cube image will move closer).
+
+In the above modes, the following utilities must also be used accordingly:
+Bias removal : Once it is clicked, inertial data is collected for a second, and the average of it is assumed to be the inertial sensor biases which are then subtracted automatically from the future sensor outputs. Obviously, you must use this when the device is on a horizontal platform. Otherwise the accelerometer outputs will be spoiled.
+
+ZUPT : Internally, a Kalman filter is used to stabilize the INS. Every time the system stays stationary, zero updates (zupts) should be clicked. Based on this information, the kalman filter estimates and corrects the accumulated INS errors.
+
+CUPT. This is a signal for coordinate updates. When this is clicked, Kalman filter updates the system using the initial position. Therefore, this must only be used when the system is on the initial location. Obvisouly, GPS outputs can be directly used instead of the coordinates of the initial location. However, as I want to primary use this inside the building, I intentionally do not use GPS a source.
+
+Reset. Resets the system including the covariance of the Kalman filter.
+
+NOTE: I do not have a Android phone with gyroscope. Therefore, I have not been able to check the program on a real system. Furthermore, I simply made up the sensor error model parameters for the Kalman filter.
+
+
