@@ -247,7 +247,7 @@ public class INS {
 		
 		public void avgyro(DenseMatrix64F out) { //Avarage of gyro
 			if (acing>0) {
-				CommonOps.scale(1/acing, acgyro, out);
+				CommonOps.scale(1/acing, acgyro, vr_a);
 				skew(vr_a, out);
 			}
 			else
