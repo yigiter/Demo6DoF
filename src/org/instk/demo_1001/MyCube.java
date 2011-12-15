@@ -1,5 +1,7 @@
 package org.instk.demo_1001;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -14,7 +16,7 @@ public class MyCube implements Renderer{
 	private float[] Cbn=new float[16];
 	
 	//Cube Coordinates
-	private final int sz=1; 
+	private final int sz=1;
 	private final float[][] cCoords = new float[][] {
 		new float[] {sz, sz,-sz, -sz, sz,-sz, -sz, sz, sz, sz, sz, sz}, // top
 		new float[] {sz,-sz, sz, -sz,-sz, sz, -sz,-sz,-sz, sz,-sz,-sz}, // bottom
@@ -33,7 +35,7 @@ public class MyCube implements Renderer{
 		1,0,1,1		
 	};
 		
-	private FloatBuffer[] VertexBuf;
+	private FloatBuffer[] vertexBuffers;
 	
 	public void set_pos(float[] pos){
 		Pos_b[0]=pos[0];
@@ -61,16 +63,31 @@ public class MyCube implements Renderer{
     	Cbn[15]=1;
 	}
 	
+    private static FloatBuffer makeDirectFloatBuffer(float[] vals) {
+        FloatBuffer returnVal = null;
+        int SIZE_OF_FLOAT = 4; // size of float in bytes
+        ByteBuffer vbb = ByteBuffer.allocateDirect(vals.length * SIZE_OF_FLOAT);
+        vbb.order(ByteOrder.nativeOrder());
+        returnVal = vbb.asFloatBuffer();
+        returnVal.put(vals);
+        returnVal.position(0);
+        return returnVal;
+    }
+
 	public MyCube(float[] pos, float[] dcm) {
-		//Set initial camera coordinates
-		set_pos(pos);
-		set_dcm(dcm);
-		
-		//Vertex buffer for renderer
-		VertexBuf = new FloatBuffer[6];
-		for (int i = 0; i < 6; i++)
-			VertexBuf[i] = FloatBuffer.wrap(cCoords[i]);
+        //Set initial camera coordinates
+        set_pos(pos);
+        set_dcm(dcm);
+
+        initializeVertexBuf(cCoords);
 	}
+
+	private void initializeVertexBuf(float[][] cCoords) {
+        vertexBuffers = new FloatBuffer[cCoords.length];
+        for (int index = 0; index < vertexBuffers.length; index++) {
+                vertexBuffers[index] = (makeDirectFloatBuffer(cCoords[index]));
+        }
+	}        
 	
 	//Main Shape draw routine
 	public void draw(GL10 gl) {
@@ -81,7 +98,7 @@ public class MyCube implements Renderer{
 			gl.glDisableClientState(GL10.GL_COLOR_ARRAY);
 			
 			gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
-			gl.glVertexPointer(3, GL10.GL_FLOAT, 0, VertexBuf[i]);
+			gl.glVertexPointer(3, GL10.GL_FLOAT, 0, vertexBuffers[i]);
 			gl.glDrawArrays(GL10.GL_TRIANGLE_FAN, 0, 4);
 			gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
 		}
