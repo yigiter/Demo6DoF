@@ -16,7 +16,7 @@
             android:name=".MainActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
-            android:screenOrientation="landscape">
+            android:screenOrientation="portrait">
             <intent-filter>
                 <!-- Using data in MainActivity activity, make icon vanish-->
                 <!--data android:scheme="project"/-->
